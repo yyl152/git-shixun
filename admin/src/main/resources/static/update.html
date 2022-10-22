@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<!-- 网页使用的语言 -->
+<html lang="zh-CN">
+    <head>
+    	<base href="<%=basePath%>"/>
+        <!-- 指定字符集 -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>修改用户</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <script src="js/jquery-2.1.0.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/user_validate.js"></script>
+        
+    </head>
+    <body>
+        <div class="container" style="width: 400px;">
+        <h3 style="text-align: center;">修改联系人</h3>
+        <form action="/user/update" method="post">
+          <div class="form-group">
+            <label for="name">姓名：</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="请输入姓名" />
+          </div>
+
+          <div class="form-group">
+            <label>性别：</label>
+              <input type="radio" name="sex" value="男"  />男
+                <input type="radio" name="sex" value="女"  />女
+          </div>
+
+          <div class="form-group">
+            <label for="age">年龄：</label>
+            <input type="text" class="form-control" id="age"  name="age" placeholder="请输入年龄" />
+          </div>
+
+          <div class="form-group">
+            <label for="address">籍贯：</label>
+             <select name="address" id="address" class="form-control" >
+                <option value="陕西">陕西</option>
+                <option value="北京">北京</option>
+                <option value="上海">上海</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="qq">QQ：</label>
+              <span id="errorqqformat" style="color: red;"></span>
+            <input type="text" id="qq" class="form-control" name="qq" placeholder="请输入QQ号码"/>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email：</label>
+            <input type="text" id="email" class="form-control" name="email" placeholder="请输入邮箱地址"/>
+          </div>
+
+             <div class="form-group" style="text-align: center">
+                <input class="btn btn-primary" type="submit" value="提交" />
+                <input class="btn btn-default" type="reset" value="重置" />
+                <input class="btn btn-default" type="button" value="返回"/>
+             </div>
+        </form>
+        </div>
+    </body>
+    <script>
+        $(function () {
+            var params = location.search;//?id=525
+            var index = params.lastIndexOf("=");//=的下标
+            var id = params.substring(index+1);//525
+            $.get("user/selectById",{id:id},function (r) {
+                if (r.code==0) {
+                    alert(r.msg);
+                }else{
+                    $("#name").val(r.data.name);
+                    $("[value="+r.data.gender+"]").attr("checked","checked");
+                    $("#age").val(r.data.age);
+                    $("[value="+r.data.address+"]").attr("selected","selected");
+                    $("#qq").val(r.data.qq);
+                    $("#email").val(r.data.email);
+                }
+            })
+
+            //给age输入框绑定一个失去焦点事件进行格式验证
+            $("#age").blur(testAge);
+            //给age输入框绑定一个获取焦点事件进行还原
+            $("#age").focus(function () {
+                $("#errorformat").css("display","none");
+            })
+            //给qq输入框绑定一个失去焦点事件进行格式验证
+            $("#qq").blur(testQq);
+            //给qq输入框绑定一个获取焦点事件进行还原
+            $("#qq").focus(function () {
+                $("#errorqqformat").html("");
+            })
+
+            $("form").submit(function () {
+                //提交后先验证年龄格式
+                var flagAge = testAge();
+                //提交后先验证年龄格式
+                var flagQq = testQq();
+                //格式准确后再发请求
+                if (flagAge && flagQq) {
+                    //$("form").serialize()   返回值是   "name=zs&gender=男....email=555"
+                    // console.log($("form").serialize() + "&id=" + id);
+                    $.get("user/update",$("form").serialize()+"&id="+id,function (r) {
+                        if (r.code==0) {
+                            alert(r.msg);
+                        }else{
+                            location.href = "list.html";
+                        }
+                    })
+                }
+                return false;
+            })
+        })
+    </script>
+</html>

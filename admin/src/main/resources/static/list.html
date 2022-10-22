@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<!-- 网页使用的语言 -->
+<html lang="zh-CN">
+<head>
+    <!-- 指定字符集 -->
+    <meta charset="utf-8">
+    <!-- 使用Edge最新的浏览器的渲染方式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- viewport视口：网页可以根据设置的宽度自动进行适配，在浏览器的内部虚拟一个容器，容器的宽度与设备的宽度相同。
+    width: 默认宽度与设备的宽度相同
+    initial-scale: 初始的缩放比，为1:1 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>用户信息管理系统</title>
+
+    <!-- 1. 导入CSS的全局样式 -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- 2. jQuery导入，建议使用1.9以上的版本 -->
+    <script src="js/jquery-2.1.0.min.js"></script>
+    <!-- 3. 导入bootstrap的js文件 -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="js/user_validate.js"></script>
+    <style type="text/css">
+        td, th {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h3 style="text-align: center">用户信息列表</h3>
+    <table border="1" class="table table-bordered table-hover">
+        <tr class="success">
+            <th>编号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>年龄</th>
+            <th>籍贯</th>
+            <th>QQ</th>
+            <th>邮箱</th>
+            <th>操作</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>张三</td>
+            <td>男</td>
+            <td>20</td>
+            <td>广东</td>
+            <td>44444222</td>
+            <td>zs@qq.com</td>
+            <td><a class="btn btn-default btn-sm" href="update.html">修改</a>&nbsp;<a class="btn btn-default btn-sm"
+                                                                                    href="">删除</a></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>张三</td>
+            <td>男</td>
+            <td>20</td>
+            <td>广东</td>
+            <td>44444222</td>
+            <td>zs@qq.com</td>
+            <td><a class="btn btn-default btn-sm" href="update.html">修改</a>&nbsp;<a class="btn btn-default btn-sm"
+                                                                                    href="">删除</a></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>张三</td>
+            <td>男</td>
+            <td>20</td>
+            <td>广东</td>
+            <td>44444222</td>
+            <td>zs@qq.com</td>
+            <td><a class="btn btn-default btn-sm" href="update.html">修改</a>&nbsp;<a class="btn btn-default btn-sm"
+                                                                                    href="">删除</a></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>张三</td>
+            <td>男</td>
+            <td>20</td>
+            <td>广东</td>
+            <td>44444222</td>
+            <td>zs@qq.com</td>
+            <td><a class="btn btn-default btn-sm" href="update.html">修改</a>&nbsp;<a class="btn btn-default btn-sm"
+                                                                                    href="">删除</a></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>张三</td>
+            <td>男</td>
+            <td>20</td>
+            <td>广东</td>
+            <td>44444222</td>
+            <td>zs@qq.com</td>
+            <td><a class="btn btn-default btn-sm" href="update.html">修改</a>&nbsp;<a class="btn btn-default btn-sm"
+                                                                                    href="">删除</a></td>
+        </tr>
+        <tr>
+            <td colspan="8" align="center"><a class="btn btn-primary" href="add.html">添加联系人</a></td>
+        </tr>
+    </table>
+</div>
+<script>
+    //加载后执行
+    $(function () {
+        listAll();
+    })
+
+    //定义删除函数 obj是为了找到当前行，如果没后选不到当前行
+    function deleteById(obj, id) {
+        var isDelete = confirm("确定删除？");
+        if (isDelete) {
+            $.get("user/deleteById", {id: id}, function (r) {
+                if (r.code == 0) {
+                    alert(r.msg);
+                } else {
+                    obj.parentNode.parentNode.remove();
+                }
+            })
+        }
+    }
+
+    function listAll() {
+        //发送ajax请求   （url，param，回调函数）
+        $.get("user/list", {}, function (users) {
+            // console.log(users);
+            var str = '<h3 style="text-align: center">用户信息列表</h3>\n' +
+                '    <table border="1" class="table table-bordered table-hover">\n' +
+                '        <tr class="success">\n' +
+                '            <th>编号</th>\n' +
+                '            <th>姓名</th>\n' +
+                '            <th>性别</th>\n' +
+                '            <th>年龄</th>\n' +
+                '            <th>籍贯</th>\n' +
+                '            <th>QQ</th>\n' +
+                '            <th>邮箱</th>\n' +
+                '            <th>操作</th>\n' +
+                '        </tr>';
+            for (let i = 0; i < users.length; i++) {
+                str += '  <tr>\n' +
+                    '            <td>' + users[i].id + '</td>\n' +
+                    '            <td>' + users[i].name + '</td>\n' +
+                    '            <td>' + users[i].gender + '</td>\n' +
+                    '            <td>' + users[i].age + '</td>\n' +
+                    '            <td>' + users[i].address + '</td>\n' +
+                    '            <td>' + users[i].qq + '</td>\n' +
+                    '            <td>' + users[i].email + '</td>\n' +
+                    '            <td><a class="btn btn-default btn-sm" href="update.html?id='+users[i].id+'">修改</a>&nbsp;<a class="btn btn-default btn-sm" href="javascript:;" onclick="deleteById(this,' + users[i].id + ')" ">删除</a></td>\n' +
+                    '        </tr>';
+            }
+            str +=
+                '       <tr>\n' +
+                '            <td colspan="8" align="center"><a class="btn btn-primary" href="add.html">添加联系人</a></td>\n' +
+                '       </tr>' +
+                '   </table>';
+            $(".container").html(str);
+        });
+    }
+
+
+</script>
+</body>
+</html>
